@@ -1,0 +1,1 @@
+package com.example.helloWorld.repository;import com.example.helloWorld.model.Fingerprint;import org.springframework.data.jpa.repository.JpaRepository;public interface FingerPrintRepository extends JpaRepository<Fingerprint, Long > {    }
