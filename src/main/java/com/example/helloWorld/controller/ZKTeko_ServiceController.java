@@ -141,14 +141,31 @@ public class ZKTeko_ServiceController {
 
     @GetMapping("/connect")
     public ResponseEntity<Map<String, String>> connect() {
-        boolean success = fingerPrintService.initializeSensor();
         Map<String, String> response = new HashMap<>();
-        response.put("message", success ? "Sensor inicializado" : "Hubo un problema con el servidor , porfavor contactese con el soporte de sistemas verticales ");
-        return new ResponseEntity<>(response, success ? HttpStatus.OK: HttpStatus.INTERNAL_SERVER_ERROR);
+
+
+
+
+        try {
+            boolean success = fingerPrintService.initializeSensor();
+
+            if (success) {
+                response.put("message", "Sensor inicializado correctamente.");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("error", "Hubo un problema al inicializar el sensor. Por favor, contacte al soporte técnico.");
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            // Captura cualquier excepción y proporciona detalles del error
+            response.put("error", "Ocurrió un error inesperado al intentar inicializar el sensor.");
+            response.put("details", e.getMessage()); // Mensaje de la excepción
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/disconnect")
-    public ResponseEntity<Map<String, String>> disconnect() {
+    public ResponseEntity<Map<String, String>> disconnect() throws Exception {
         boolean success = fingerPrintService.closeSensor();
         Map<String, String> response = new HashMap<>();
         response.put("message", success ? "Sensor apagado" : "Hubo un problema con el servidor , porfavor contactese con el soporte de sistemas verticales ");
